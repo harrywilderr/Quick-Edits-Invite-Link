@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Info</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #loading {
+            font-size: 20px;
+            color: #007bff;
+        }
+        #errorMessage {
+            color: red;
+            display: none;
+        }
+        #columnHValue {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Client Information</h1>
+    <p>Loading data for client...</p>
+    
+    <div id="loading">Loading...</div>
+    <div id="columnHValue" style="display: none;"></div>
+    <div id="errorMessage" style="display: none;">Data not found for this email.</div>
+
+    <script>
+        // Get email parameter from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const clientEmail = urlParams.get('email');
+        
+        if (!clientEmail) {
+            alert('Email parameter is missing!');
+            return;
+        }
+
+        // Function to fetch columnH value from Netlify function
+        async function fetchClientData() {
+            try {
+                const response = await fetch(`/.netlify/functions/fetchCredits?email=${clientEmail}`);
+                const data = await response.json();
+                
+                if (data.columnHValue !== "Not Found") {
+                    document.getElementById("loading").style.display = "none";
+                    document.getElementById("columnHValue").textContent = `Column H Value: ${data.columnHValue}`;
+                    document.getElementById("columnHValue").style.display = "block";
+                } else {
+                    document.getElementById("loading").style.display = "none";
+                    document.getElementById("errorMessage").style.display = "block";
+                }
+            } catch (error) {
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("errorMessage").style.display = "block";
+            }
+        }
+
+        // Call the function to fetch data
+        fetchClientData();
+    </script>
+</body>
+</html>
