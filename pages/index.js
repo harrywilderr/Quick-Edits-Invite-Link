@@ -1,23 +1,47 @@
-import Head from 'next/head'
-import Header from '@components/Header'
-import Footer from '@components/Footer'
+import { useEffect, useState } from 'react';
 
-export default function Home() {
+const IndexPage = () => {
+  const [columnHValue, setColumnHValue] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Get email parameter from URL
+  const clientEmail = new URLSearchParams(window.location.search).get('email');
+
+  useEffect(() => {
+    if (clientEmail) {
+      const fetchData = async () => {
+        try {
+          const res = await fetch(`/.netlify/functions/fetchCredits?email=${clientEmail}`);
+          const data = await res.json();
+
+          if (data.columnHValue !== "Not Found") {
+            setColumnHValue(data.columnHValue);
+          } else {
+            setError('Data not found for this email.');
+          }
+        } catch (err) {
+          setError('There was an error fetching the data.');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchData();
+    } else {
+      setError('Email parameter is missing.');
+      setLoading(false);
+    }
+  }, [clientEmail]);
+
   return (
-    <div className="container">
-      <Head>
-        <title>Next.js Starter!</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main>
-        <Header title="Welcome to my app!" />
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
-      </main>
-
-      <Footer />
+    <div>
+      <h1>Client Information</h1>
+      {loading && <div>Loading...</div>}
+      {error && <div style={{ color: 'red' }}>{error}</div>}
+      {columnHValue && <div>Column H Value: {columnHValue}</div>}
     </div>
-  )
-}
+  );
+};
+
+export default IndexPage;
