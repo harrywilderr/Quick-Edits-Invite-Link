@@ -14,7 +14,14 @@ const IndexPage = () => {
         try {
           // Replace with the full URL of the function from the other Netlify site
           const res = await fetch(`https://qeclientcredits.netlify.app/.netlify/functions/fetchCredits?email=${clientEmail}`);
+          
+          // Check for response status
+          if (!res.ok) {
+            throw new Error(`Error fetching data: ${res.status}`);
+          }
+
           const data = await res.json();
+          console.log(data);  // Debugging line
 
           if (data.columnHValue !== "Not Found") {
             setColumnHValue(data.columnHValue);
@@ -22,7 +29,7 @@ const IndexPage = () => {
             setError('Data not found for this email.');
           }
         } catch (err) {
-          setError('There was an error fetching the data.');
+          setError(`There was an error fetching the data: ${err.message}`);
         } finally {
           setLoading(false);
         }
