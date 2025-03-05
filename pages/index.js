@@ -47,11 +47,38 @@ const IndexPage = () => {
   return (
     <div>
       <h1>Client Information</h1>
-      {loading && <div>Loading...</div>}
+      
+      {/* Loading GIF */}
+      {loading && (
+        <div style={styles.loaderContainer}>
+          <img src="https://i.gifer.com/ZKZg.gif" alt="Loading..." style={styles.loader} />
+        </div>
+      )}
+      
       {error && <div style={{ color: 'red' }}>{error}</div>}
       {columnHValue && <div>Column H Value: {columnHValue}</div>}
     </div>
   );
+};
+
+// Styles for centering the loading GIF
+const styles = {
+  loaderContainer: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Optional background overlay
+    zIndex: 9999, // Ensures the loader stays on top
+  },
+  loader: {
+    width: '100px', // Adjust the size of the loader as needed
+    height: '100px',
+  },
 };
 
 export default IndexPage;
