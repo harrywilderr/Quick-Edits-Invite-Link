@@ -12,7 +12,8 @@ const IndexPage = () => {
     if (clientEmail) {
       const fetchData = async () => {
         try {
-          const res = await fetch(`/.netlify/functions/fetchCredits?email=${clientEmail}`);
+          // Replace with the full URL of the function from the other Netlify site
+          const res = await fetch(`https://qeclientcredits.netlify.app/.netlify/functions/fetchCredits?email=${clientEmail}`);
           const data = await res.json();
 
           if (data.columnHValue !== "Not Found") {
