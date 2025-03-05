@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 const IndexPage = () => {
+  const [columnHValue, setColumnHValue] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -11,20 +12,23 @@ const IndexPage = () => {
     if (clientEmail) {
       const fetchData = async () => {
         try {
-          // Faster fetch attempt by setting headers for better performance
+          // Replace with the full URL of the function from the other Netlify site
           const res = await fetch(`https://qeclientcredits.netlify.app/.netlify/functions/fetchCredits?email=${clientEmail}`, {
+            method: 'GET',
             headers: {
-              "Cache-Control": "no-cache", // Bypass cache for fresh data
-              "Pragma": "no-cache", // Same as Cache-Control
-            }
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*', // Fix for CORS issue
+            },
           });
+
           const data = await res.json();
 
           if (data.columnHValue !== "Not Found") {
-            // Redirect the page once the invite URL is fetched
-            window.location.href = `https://www.quickedits.co/free-video-confirmation?${encodeURIComponent(data.columnHValue)}`;
+            setColumnHValue(data.columnHValue);
+            // Redirect to the new URL once we have the invite URL
+            window.location.href = `https://www.quickedits.co/free-video-confirmation?inviteUrl=${encodeURIComponent(data.columnHValue)}`;
           } else {
-            setError('No invite URL found for this email.');
+            setError('Data not found for this email.');
           }
         } catch (err) {
           setError('There was an error fetching the data.');
@@ -43,8 +47,8 @@ const IndexPage = () => {
   return (
     <div>
       <h1>Client Information</h1>
-      {loading && <div>Loading...</div>} {/* Display buffering while waiting */}
-      {error && <div style={{ color: 'red' }}>{error}</div>} {/* Display error if any */}
+      {loading && <div>Buffering... Please wait while we fetch your data...</div>}
+      {error && <div style={{ color: 'red' }}>{error}</div>}
     </div>
   );
 };
