@@ -19,9 +19,7 @@ const IndexPage = () => {
 
             if (data.columnHValue !== "Not Found") {
               setColumnHValue(data.columnHValue);
-            } else {
-              setError('Data not found for this email.');
-            }
+            } 
           } catch (err) {
             setError('There was an error fetching the data.');
           } finally {
@@ -35,34 +33,47 @@ const IndexPage = () => {
         setLoading(false);
       }
     }
-  }, []); // Empty dependency array ensures this effect runs only once on mount
+  }, []);
 
   useEffect(() => {
-    // Once the columnHValue is set, redirect to the new URL
     if (columnHValue && typeof window !== 'undefined') {
-      window.location.href = `https://www.quickedits.co/free-video-confirmation?link=${encodeURIComponent(columnHValue)}`;
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectUrl = urlParams.get('page') === 'home' 
+        ? `https://www.quickedits.co/account-confirmation-home?link=${encodeURIComponent(columnHValue)}`
+        : `https://www.quickedits.co/free-video-confirmation?link=${encodeURIComponent(columnHValue)}`;
+      
+      window.location.href = redirectUrl;
     }
   }, [columnHValue]);
 
   return (
-    <div>
-      <h1>Client Information</h1>
-      
-      {/* Loading GIF */}
+    <div style={styles.container}>
+      <h1 style={styles.text}>Creating account...</h1>
       {loading && (
         <div style={styles.loaderContainer}>
           <img src="https://i.gifer.com/ZKZg.gif" alt="Loading..." style={styles.loader} />
         </div>
       )}
-      
       {error && <div style={{ color: 'red' }}>{error}</div>}
-      {columnHValue && <div>Column H Value: {columnHValue}</div>}
     </div>
   );
 };
 
-// Styles for centering the loading GIF
+// Styles
 const styles = {
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    fontFamily: 'Lato, sans-serif',
+  },
+  text: {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    fontFamily: 'Lato, sans-serif',
+  },
   loaderContainer: {
     position: 'fixed',
     top: 0,
@@ -72,13 +83,14 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Optional background overlay
-    zIndex: 9999, // Ensures the loader stays on top
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    zIndex: 9999,
   },
   loader: {
-    width: '100px', // Adjust the size of the loader as needed
+    width: '100px',
     height: '100px',
   },
 };
 
 export default IndexPage;
+
