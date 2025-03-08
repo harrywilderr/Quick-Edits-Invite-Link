@@ -23,7 +23,7 @@ const IndexPage = () => {
             } catch (err) {
               console.error('Error fetching data:', err);
             }
-            await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2s before retrying
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 2s before retrying
           }
           setLoading(false);
         };
@@ -42,7 +42,7 @@ const IndexPage = () => {
       const pageParam = urlParams.get('page');
       const baseUrl = pageParam === 'home' 
         ? 'https://www.quickedits.co/account-confirmation-home' 
-        : 'https://www.quickedits.co/account-confirmation';
+        : 'https://www.quickedits.co/free-video-confirmation';
 
       window.location.href = `${baseUrl}?link=${encodeURIComponent(columnHValue)}`;
     }
@@ -51,6 +51,7 @@ const IndexPage = () => {
   return (
     <div style={styles.container}>
       <h1 style={styles.text}>Creating account...</h1>
+      <p style={styles.subtext}>This should take about 10 seconds</p>
       
       {loading && (
         <div style={styles.loaderContainer}>
@@ -76,6 +77,12 @@ const styles = {
   text: {
     fontSize: '24px',
     fontWeight: '400', // Regular weight
+  },
+  subtext: {
+    fontSize: '16px',
+    fontWeight: '300',
+    color: '#666',
+    marginTop: '10px',
   },
   loaderContainer: {
     marginTop: '20px',
