@@ -42,7 +42,7 @@ const IndexPage = () => {
       const pageParam = urlParams.get('page');
       const baseUrl = pageParam === 'home' 
         ? 'https://www.quickedits.co/account-confirmation-home' 
-        : 'https://www.quickedits.co/free-video-confirmation';
+        : 'https://www.quickedits.co/account-confirmation';
 
       window.location.href = `${baseUrl}?link=${encodeURIComponent(columnHValue)}`;
     }
