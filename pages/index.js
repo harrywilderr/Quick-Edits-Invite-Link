@@ -7,24 +7,25 @@ const IndexPage = () => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // Get email parameter from URL
       const clientEmail = new URLSearchParams(window.location.search).get('email');
       
       if (clientEmail) {
         const fetchData = async () => {
-          try {
-            // Replace with the full URL of the function from the other Netlify site
-            const res = await fetch(`https://qeclientcredits.netlify.app/.netlify/functions/fetchCredits?email=${clientEmail}`);
-            const data = await res.json();
+          while (!columnHValue) { // Keep trying until columnHValue is found
+            try {
+              const res = await fetch(`https://qeclientcredits.netlify.app/.netlify/functions/fetchCredits?email=${clientEmail}`);
+              const data = await res.json();
 
-            if (data.columnHValue !== "Not Found") {
-              setColumnHValue(data.columnHValue);
-            } 
-          } catch (err) {
-            setError('There was an error fetching the data.');
-          } finally {
-            setLoading(false);
+              if (data.columnHValue !== "Not Found") {
+                setColumnHValue(data.columnHValue);
+                break; // Exit loop once value is found
+              }
+            } catch (err) {
+              console.error('Error fetching data:', err);
+            }
+            await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2s before retrying
           }
+          setLoading(false);
         };
 
         fetchData();
@@ -38,59 +39,51 @@ const IndexPage = () => {
   useEffect(() => {
     if (columnHValue && typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
-      const redirectUrl = urlParams.get('page') === 'home' 
-        ? `https://www.quickedits.co/account-confirmation-home?link=${encodeURIComponent(columnHValue)}`
-        : `https://www.quickedits.co/free-video-confirmation?link=${encodeURIComponent(columnHValue)}`;
-      
-      window.location.href = redirectUrl;
+      const pageParam = urlParams.get('page');
+      const baseUrl = pageParam === 'home' 
+        ? 'https://www.quickedits.co/account-confirmation-home' 
+        : 'https://www.quickedits.co/free-video-confirmation';
+
+      window.location.href = `${baseUrl}?link=${encodeURIComponent(columnHValue)}`;
     }
   }, [columnHValue]);
 
   return (
     <div style={styles.container}>
       <h1 style={styles.text}>Creating account...</h1>
+      
       {loading && (
         <div style={styles.loaderContainer}>
           <img src="https://i.gifer.com/ZKZg.gif" alt="Loading..." style={styles.loader} />
         </div>
       )}
+
       {error && <div style={{ color: 'red' }}>{error}</div>}
     </div>
   );
 };
 
-// Styles
 const styles = {
   container: {
+    textAlign: 'center',
+    fontFamily: 'Lato, sans-serif',
+    height: '100vh',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100vh',
-    fontFamily: 'Lato, sans-serif',
   },
   text: {
     fontSize: '24px',
-    fontWeight: 'bold',
-    fontFamily: 'Lato, sans-serif',
+    fontWeight: '400', // Regular weight
   },
   loaderContainer: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100vw',
-    height: '100vh',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    zIndex: 9999,
+    marginTop: '20px',
   },
   loader: {
-    width: '100px',
-    height: '100px',
+    width: '80px',
+    height: '80px',
   },
 };
 
 export default IndexPage;
-
