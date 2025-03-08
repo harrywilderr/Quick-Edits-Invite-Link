@@ -23,7 +23,7 @@ const IndexPage = () => {
             } catch (err) {
               console.error('Error fetching data:', err);
             }
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 2s before retrying
+            await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2s before retrying
           }
           setLoading(false);
         };
@@ -40,11 +40,12 @@ const IndexPage = () => {
     if (columnHValue && typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const pageParam = urlParams.get('page');
-      const baseUrl = pageParam === 'home' 
-        ? 'https://www.quickedits.co/account-confirmation-home' 
-        : 'https://www.quickedits.co/account-confirmation';
 
-      window.location.href = `${baseUrl}?link=${encodeURIComponent(columnHValue)}`;
+      if (pageParam === 'home') {
+        window.location.href = `https://www.quickedits.co/account-confirmation-home?link=${encodeURIComponent(columnHValue)}`;
+      } else {
+        window.location.href = `https://www.quickedits.co/account-confirmation?link=${encodeURIComponent(columnHValue)}`;
+      }
     }
   }, [columnHValue]);
 
