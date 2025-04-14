@@ -4,6 +4,7 @@ const IndexPage = () => {
   const [columnHValue, setColumnHValue] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -11,19 +12,19 @@ const IndexPage = () => {
       
       if (clientEmail) {
         const fetchData = async () => {
-          while (!columnHValue) { // Keep trying until columnHValue is found
+          while (!columnHValue) {
             try {
               const res = await fetch(`https://qeclientcredits.netlify.app/.netlify/functions/fetchCredits?email=${clientEmail}`);
               const data = await res.json();
 
               if (data.columnHValue !== "Not Found") {
                 setColumnHValue(data.columnHValue);
-                break; // Exit loop once value is found
+                break;
               }
             } catch (err) {
               console.error('Error fetching data:', err);
             }
-            await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2s before retrying
+            await new Promise(resolve => setTimeout(resolve, 2000));
           }
           setLoading(false);
         };
@@ -49,14 +50,30 @@ const IndexPage = () => {
     }
   }, [columnHValue]);
 
+  // Animate progress bar over ~30 seconds
+  useEffect(() => {
+    if (loading) {
+      const interval = setInterval(() => {
+        setProgress(prev => {
+          const next = prev + 1;
+          if (next >= 100) clearInterval(interval);
+          return next;
+        });
+      }, 300); // 300ms * 100 = 30,000ms (30 seconds)
+
+      return () => clearInterval(interval);
+    }
+  }, [loading]);
+
   return (
     <div style={styles.container}>
+      <img src="https://i.imgur.com/UkDKdtb.png" alt="Icon" style={styles.icon} />
       <h1 style={styles.text}>Creating account...</h1>
-      <p style={styles.subtext}>This should take about 10 seconds</p>
-      
+      <p style={styles.subtext}>This should take about 30 seconds</p>
+
       {loading && (
-        <div style={styles.loaderContainer}>
-          <img src="https://i.gifer.com/ZKZg.gif" alt="Loading..." style={styles.loader} />
+        <div style={styles.progressContainer}>
+          <div style={{ ...styles.progressBar, width: `${progress}%` }} />
         </div>
       )}
 
@@ -68,30 +85,36 @@ const IndexPage = () => {
 const styles = {
   container: {
     textAlign: 'center',
-    fontFamily: 'Lato, sans-serif',
-    height: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingTop: '100px',
+    fontFamily: 'Arial, sans-serif',
+  },
+  icon: {
+    width: '40px',
+    height: '40px',
+    marginBottom: '20px',
   },
   text: {
     fontSize: '24px',
-    fontWeight: '400', // Regular weight
+    marginBottom: '10px',
   },
   subtext: {
     fontSize: '16px',
-    fontWeight: '300',
-    color: '#666',
-    marginTop: '10px',
+    color: '#777',
+    marginBottom: '30px',
   },
-  loaderContainer: {
-    marginTop: '20px',
+  progressContainer: {
+    width: '80%',
+    height: '10px',
+    backgroundColor: '#eee',
+    margin: '0 auto',
+    borderRadius: '5px',
+    overflow: 'hidden',
   },
-  loader: {
-    width: '80px',
-    height: '80px',
-  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#4CAF50',
+    transition: 'width 0.3s ease-in-out',
+  }
 };
 
 export default IndexPage;
