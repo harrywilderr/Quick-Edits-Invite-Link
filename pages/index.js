@@ -58,7 +58,7 @@ const IndexPage = () => {
           if (next >= 100) clearInterval(interval);
           return next;
         });
-      }, 300); // 30s total
+      }, 400); // 40s total
 
       return () => clearInterval(interval);
     }
