@@ -50,7 +50,6 @@ const IndexPage = () => {
     }
   }, [columnHValue]);
 
-  // Animate progress bar over ~30 seconds
   useEffect(() => {
     if (loading) {
       const interval = setInterval(() => {
@@ -59,7 +58,7 @@ const IndexPage = () => {
           if (next >= 100) clearInterval(interval);
           return next;
         });
-      }, 300); // 300ms * 100 = 30,000ms (30 seconds)
+      }, 300); // 30s total
 
       return () => clearInterval(interval);
     }
@@ -72,8 +71,10 @@ const IndexPage = () => {
       <p style={styles.subtext}>This should take about 30 seconds</p>
 
       {loading && (
-        <div style={styles.progressContainer}>
-          <div style={{ ...styles.progressBar, width: `${progress}%` }} />
+        <div style={styles.loaderContainer}>
+          <div style={styles.progressBarWrapper}>
+            <div style={{ ...styles.progressBar, width: `${progress}%` }} />
+          </div>
         </div>
       )}
 
@@ -85,35 +86,39 @@ const IndexPage = () => {
 const styles = {
   container: {
     textAlign: 'center',
-    paddingTop: '100px',
-    fontFamily: 'Arial, sans-serif',
+    paddingTop: '80px',
+    fontFamily: 'Arial, sans-serif'
   },
   icon: {
     width: '40px',
-    height: '40px',
-    marginBottom: '20px',
+    marginBottom: '10px'
   },
   text: {
     fontSize: '24px',
-    marginBottom: '10px',
+    fontWeight: 'bold',
+    marginBottom: '10px'
   },
   subtext: {
     fontSize: '16px',
     color: '#777',
-    marginBottom: '30px',
+    marginBottom: '30px'
   },
-  progressContainer: {
-    width: '80%',
-    height: '10px',
+  loaderContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  progressBarWrapper: {
+    width: '200px',
+    height: '8px',
     backgroundColor: '#eee',
-    margin: '0 auto',
     borderRadius: '5px',
-    overflow: 'hidden',
+    overflow: 'hidden'
   },
   progressBar: {
     height: '100%',
-    backgroundColor: '#4CAF50',
-    transition: 'width 0.3s ease-in-out',
+    backgroundColor: '#000',
+    transition: 'width 0.3s ease'
   }
 };
 
