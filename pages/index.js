@@ -66,7 +66,7 @@ const IndexPage = () => {
 
   return (
     <div style={styles.container}>
-      <img src="https://i.imgur.com/UkDKdtb.png" alt="Icon" style={styles.icon} />
+      <img src="https://s8.ezgif.com/tmp/ezgif-8d6f004730a865.gif" alt="Icon" style={styles.icon} />
       <h1 style={styles.text}>Creating account...</h1>
       <p style={styles.subtext}>This should take about 30 seconds</p>
 
